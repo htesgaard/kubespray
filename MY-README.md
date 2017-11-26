@@ -62,7 +62,23 @@ index 40109f9b..de940479 100644
 
 To proxy DNS resolution on the guests to the host resolver, this tweak has been done to the Vagrantfile
 ```diff
-TODO
+diff --git a/Vagrantfile b/Vagrantfile
+index 2eefbfdb..c839d709 100644
+--- a/Vagrantfile
++++ b/Vagrantfile
+@@ -115,6 +115,12 @@ Vagrant.configure("2") do |config|
+             vb.customize ['createhd', '--filename', file_to_disk, '--size', 500 * 1024]
+         end
+         vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
++
++        # Configure NAT Network to proxy DNS requests to the host DNS resolver
++        # --natdnshostresolver<1-N> on|off: This setting makes the NAT engine use the host's resolver mechanisms to handle DNS requests. Please see Section 9.11.5, “Enabling DNS proxy in NAT mode” for detailsx).
++        # https://www.virtualbox.org/manual/ch09.html#nat-adv-dns
++        # https://gist.github.com/jedi4ever/5657094
++        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+       end
+ 
+       ip = "#{$subnet}.#{i+100}"
 ```
  
 ## Provision using the commandline 

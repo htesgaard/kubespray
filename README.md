@@ -1,3 +1,5 @@
+See my custom notes for [running GlusterFS on vagrant](MY-README.md)
+
 ![Kubernetes Logo](https://s28.postimg.org/lf3q4ocpp/k8s.png)
 
 ## Deploy a production ready kubernetes cluster
