@@ -1,4 +1,4 @@
-See my custom notes for [running GlusterFS on vagrant](MY-README.md)
+See my custom notes for [running GlusterFS on Vagrant](MY-README.md)
 
 ![Kubernetes Logo](https://s28.postimg.org/lf3q4ocpp/k8s.png)
 
