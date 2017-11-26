@@ -106,10 +106,15 @@ Vagrant.configure("2") do |config|
         config.vm.synced_folder src, dst
       end
 
+      file_to_disk = "./.vagrant/disks/glusterfs_#{i}.vdi"
       config.vm.provider :virtualbox do |vb|
         vb.gui = $vm_gui
         vb.memory = $vm_memory
         vb.cpus = $vm_cpus
+        unless File.exist?(file_to_disk)
+            vb.customize ['createhd', '--filename', file_to_disk, '--size', 500 * 1024]
+        end
+        vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
       end
 
       ip = "#{$subnet}.#{i+100}"
@@ -118,7 +123,7 @@ Vagrant.configure("2") do |config|
         "bootstrap_os": SUPPORTED_OS[$os][:bootstrap_os],
         "local_release_dir" => $local_release_dir,
         "download_run_once": "False",
-        "kube_network_plugin": $network_plugin
+        "disk_volume_device_1": "/dev/sdb",
       }
 
       config.vm.network :private_network, ip: ip
@@ -143,14 +148,16 @@ Vagrant.configure("2") do |config|
           ansible.sudo = true
           ansible.limit = "all"
           ansible.host_key_checking = false
-          ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache"]
+          ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-vvvv"]
           ansible.host_vars = host_vars
           #ansible.tags = ['download']
           ansible.groups = {
             "etcd" => ["#{$instance_name_prefix}-0[1:#{$etcd_instances}]"],
             "kube-master" => ["#{$instance_name_prefix}-0[1:#{$kube_master_instances}]"],
             "kube-node" => ["#{$instance_name_prefix}-0[1:#{$kube_node_instances}]"],
+            "gfs-cluster" => ["#{$instance_name_prefix}-0[1:#{$kube_node_instances}]"],
             "k8s-cluster:children" => ["kube-master", "kube-node"],
+            "network-storage:children:children" => ["gfs-cluster"],
           }
         end
       end
