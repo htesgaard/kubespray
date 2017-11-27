@@ -1,18 +1,28 @@
 This page contains my onw notes on using kubespray on Vagrant with GlusterFS
 
+# Preqs
+
+Netaddr
+```
+$ pip install netaddr
+$ which netaddr
+  /Users/helge/.pyenv/shims/netaddr
+```
+
 # Usage
 
 Checkout this project and run `vagrant up`
 
 # Provision glusterfs from commandline
 ```
-/Users/helge/.pyenv/versions/2.7.14/envs/tools2/bin/python2.7 /Users/helge/.pyenv/versions/tools2/bin/ansible-playbook --connection=ssh --timeout=30 --limit=all --inventory-file=/Users/helge/projects/myprojects/kubespray/.vagrant/provisioners/ansible/inventory --become --forks=3 --flush-cache -vvvv ./contrib/network-storage/glusterfs/glusterfs.yml
+
+/Users/helge/.pyenv/versions/2.7.14/envs/tools2/bin/python2.7 /Users/helge/.pyenv/versions/tools2/bin/ansible-playbook --connection=ssh --timeout=30 --limit=all --inventory-file=./.vagrant/provisioners/ansible/inventory --become --forks=3 --flush-cache -vvvv ./contrib/network-storage/glusterfs/glusterfs.yml
 ```
 
 # Custom provisioning from the commandline
 Regular provision from commandline equal to `vagrant provision`
 ```
-/Users/helge/.pyenv/versions/2.7.14/envs/tools2/bin/python2.7 /Users/helge/.pyenv/versions/tools2/bin/ansible-playbook --connection=ssh --timeout=30 --limit=all --inventory-file=/Users/helge/projects/myprojects/kubespray/.vagrant/provisioners/ansible/inventory --become --forks=3 --flush-cache -vvvv cluster.yml
+/Users/helge/.pyenv/versions/2.7.14/envs/tools2/bin/python2.7 /Users/helge/.pyenv/versions/tools2/bin/ansible-playbook --connection=ssh --timeout=30 --limit=all --inventory-file=./.vagrant/provisioners/ansible/inventory --become --forks=3 --flush-cache -vvvv cluster.yml
 ```
 
 
