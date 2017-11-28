@@ -27,6 +27,7 @@ $shared_folders = {}
 $forwarded_ports = {}
 $subnet = "172.17.8"
 $os = "ubuntu"
+$domainame = ".mydomain.dk"
 $network_plugin = "flannel"
 # The first three nodes are etcd servers
 $etcd_instances = $num_instances
@@ -78,7 +79,7 @@ Vagrant.configure("2") do |config|
   end
 
   (1..$num_instances).each do |i|
-    config.vm.define vm_name = "%s-%02d" % [$instance_name_prefix, i] do |config|
+        config.vm.define vm_name = '%s-%02d%s' % [$instance_name_prefix, i, $domainame] do |config|
       config.vm.hostname = vm_name
 
       if Vagrant.has_plugin?("vagrant-proxyconf")
@@ -154,14 +155,15 @@ Vagrant.configure("2") do |config|
           ansible.sudo = true
           ansible.limit = "all"
           ansible.host_key_checking = false
-          ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-vvvv"]
+          #ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-vvvv"]
+          ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache"]
           ansible.host_vars = host_vars
           #ansible.tags = ['download']
           ansible.groups = {
-            "etcd" => ["#{$instance_name_prefix}-0[1:#{$etcd_instances}]"],
-            "kube-master" => ["#{$instance_name_prefix}-0[1:#{$kube_master_instances}]"],
-            "kube-node" => ["#{$instance_name_prefix}-0[1:#{$kube_node_instances}]"],
-            "gfs-cluster" => ["#{$instance_name_prefix}-0[1:#{$kube_node_instances}]"],
+            "etcd" => ["#{$instance_name_prefix}-0[1:#{$etcd_instances}]"+$domainame],
+            "kube-master" => ["#{$instance_name_prefix}-0[1:#{$kube_master_instances}]"+$domainame],
+            "kube-node" => ["#{$instance_name_prefix}-0[1:#{$kube_node_instances}]"+$domainame],
+            "gfs-cluster" => ["#{$instance_name_prefix}-0[1:#{$kube_node_instances}]"+$domainame],
             "k8s-cluster:children" => ["kube-master", "kube-node"],
             "network-storage:children:children" => ["gfs-cluster"],
           }
