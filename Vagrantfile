@@ -27,7 +27,6 @@ $shared_folders = {}
 $forwarded_ports = {}
 $subnet = "172.17.8"
 $os = "ubuntu"
-$domainame = ".mydomain.dk"
 $network_plugin = "flannel"
 # The first three nodes are etcd servers
 $etcd_instances = $num_instances
@@ -36,6 +35,7 @@ $kube_master_instances = $num_instances == 1 ? $num_instances : ($num_instances 
 # All nodes are kube nodes
 $kube_node_instances = $num_instances
 $local_release_dir = "/vagrant/temp"
+$domainame = ".mydomain.dk"
 
 host_vars = {}
 
@@ -169,7 +169,6 @@ Vagrant.configure("2") do |config|
           }
         end
       end
-
     end
   end
 end
